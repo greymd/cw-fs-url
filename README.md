@@ -31,8 +31,9 @@ options:
 * EFS Throughput in MiB/s
 * EFS IOPS
 
-EBS metrics are calculated in alignment with [Amazon CloudWatch metrics for Amazon EBS - Amazon Elastic Compute Cloud](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using_cloudwatch_ebs.html).
-EFS metrics are calculated in alignment with [Using metric math with Amazon EFS - Amazon Elastic File System](https://docs.aws.amazon.com/efs/latest/ug/monitoring-metric-math.html).
+---
+* EBS metrics are calculated in alignment with [Amazon CloudWatch metrics for Amazon EBS - Amazon Elastic Compute Cloud](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using_cloudwatch_ebs.html).
+* EFS metrics are calculated in alignment with [Using metric math with Amazon EFS - Amazon Elastic File System](https://docs.aws.amazon.com/efs/latest/ug/monitoring-metric-math.html).
 
 # Usage Examples
 
