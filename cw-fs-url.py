@@ -279,12 +279,12 @@ def generate_url(region, service_type, metric_type, start_time, end_time, period
     return f'https://{region}.console.aws.amazon.com/cloudwatch/home?region={region}#metricsV2?graph={graph_query}'
 
 def main():
-    parser = argparse.ArgumentParser(description="Generate a CloudWatch Metrics URL for EBS/EFS IOPS/Throughput calculation.")
+    parser = argparse.ArgumentParser(description="Generate a CloudWatch Metrics URL for EBS/EFS IOPS and Throughput calculation.")
     parser.add_argument("--from", dest="start_time", required=True, help="Start time in ISO8601 format.")
     parser.add_argument("--to", dest="end_time", required=True, help="End time in ISO8601 format.")
     parser.add_argument("--ids", dest="resource_ids", required=True, help="Comma-separated list of EBS volume IDs or EFS filesystem IDs.")
     parser.add_argument("--service", dest="service_type", required=True, choices=['ebs', 'efs'], help="Set service type")
-    parser.add_argument("--metric", dest="metric_type", required=True, choices=['mibs', 'iops', 'latency'], help="Set metric type. mibs is Throughput in MiB/s, latency is ms/op")
+    parser.add_argument("--metric", dest="metric_type", required=True, choices=['mibs', 'iops', 'latency'], help="Set metric type. mibs denotes Throughput in MiB/s; latency denotes ms/op")
     parser.add_argument("--region", required=True, help="AWS region.")
     parser.add_argument("--period", required=False, default='300', help="Set 60, 300, 3600 or any multiple of 60 [default: 300]")
     args = parser.parse_args()
