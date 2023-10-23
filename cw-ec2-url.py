@@ -95,6 +95,22 @@ def ec2_statuscheck(instance_ids) -> Clause:
         clause.push(item)
     return clause
 
+def ec2_network_packets(instance_ids) -> Clause:
+    namespace = 'AWS/EC2'
+    clause = Clause()
+    metrics: list[Item] = []
+    maths: list[Item] =[]
+    idx = 0
+    for instance_id in instance_ids:
+        dimension = f"InstanceId={instance_id}"
+        for metric_name in ['NetworkPacketsIn', 'NetworkPacketsOut']:
+          idx += 1
+          maths.append(generate_clause_math(f"e{idx}", f'm{idx}/DIFF_TIME(m{idx})', f'{instance_id} {metric_name} in pps'))
+          metrics.append(generate_clause_metric(f"m{idx}", namespace, metric_name, dimension))
+    for item in metrics + maths:
+        clause.push(item)
+    return clause
+
 def ec2_network(instance_ids) -> Clause:
     namespace = 'AWS/EC2'
     clause = Clause()
@@ -106,6 +122,7 @@ def ec2_network(instance_ids) -> Clause:
         for metric_name in ['NetworkIn', 'NetworkOut']:
           idx += 1
           maths.append(generate_clause_math(f"e{idx}", f'(m{idx}/1048576)/PERIOD(m{idx})', f'{instance_id} {metric_name} in MiB/s'))
+          # maths.append(generate_clause_math(f"e{idx}", f'm{idx}/DIFF_TIME(m{idx})', f'{instance_id} {metric_name} in MiB/s'))
           metrics.append(generate_clause_metric(f"m{idx}", namespace, metric_name, dimension))
     for item in metrics + maths:
         clause.push(item)
@@ -154,6 +171,9 @@ def generate_url(region, metric_type, start_time, end_time, period, volume_ids) 
     if metric_type == 'network':
         c.push(ec2_network(volume_ids))
         stat = 'Sum'
+    elif metric_type == 'packets':
+        c.push(ec2_network_packets(volume_ids))
+        stat = 'Maximum'
     elif metric_type == 'cpu':
         c.push(ec2_cpu(volume_ids))
         stat = 'Maximum'
@@ -185,7 +205,7 @@ def main():
     parser.add_argument("--from", dest="start_time", required=True, help="Start time in ISO8601 format.")
     parser.add_argument("--to", dest="end_time", required=True, help="End time in ISO8601 format.")
     parser.add_argument("--ids", dest="resource_ids", required=True, help="Comma-separated list of Instance IDs")
-    parser.add_argument("--metric", dest="metric_type", required=True, choices=['network', 'cpu', 'statuscheck'], help="Set metric type")
+    parser.add_argument("--metric", dest="metric_type", required=True, choices=['network', 'cpu', 'statuscheck', 'packets'], help="Set metric type")
     parser.add_argument("--region", required=True, help="AWS region.")
     parser.add_argument("--period", required=False, default='300', help="Set 60, 300, 3600 or any multiple of 60 [default: 300]")
     args = parser.parse_args()
