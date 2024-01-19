@@ -213,7 +213,7 @@ def efs_iops(fs_ids) -> Clause:
         dimension = f"FileSystemId={fsid}"
         for metric_name in ['TotalIOBytes', 'MeteredIOBytes', 'DataReadIOBytes', 'DataWriteIOBytes', 'MetadataWriteIOBytes', 'MetadataReadIOBytes', 'MetadataIOBytes']:
           idx += 1
-          maths.append(generate_clause_math(f"e{idx}", f'(m{idx}/1048576)/PERIOD(m{idx})', f'{fsid} {metric_name} in IOPS'))
+          maths.append(generate_clause_math(f"e{idx}", f'm{idx}/PERIOD(m{idx})', f'{fsid} {metric_name} in IOPS'))
           metrics.append(generate_clause_metric(f"m{idx}", namespace, metric_name, dimension))
     for item in metrics + maths:
         clause.push(item)
